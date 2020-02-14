@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="../../../layui.css">
+<script src="../../../../layui.js"></script>
+<link rel="stylesheet" href="https://heerey525.github.io/layui-v2.4.3/layui-v2.4.5/css/layui.css">
+<script src="../../../../../js/jquery.min.js"></script>
+<body>
+<form class="layui-form layui-form-pane" action="">
+    <div class="layui-form-item">
+            <select name="interest"  lay-filter="selecttype_name" id="selecttype_name">
+                <option value="">请选择</option>
+            </select>
+        <br>
+            <textarea placeholder="验证信息" class="layui-textarea" id="text"></textarea>
+    </div>
+    <div class="layui-input-block">
+        <button class="layui-btn " lay-submit="" lay-filter="adduser">发送申请</button>
+    </div>
+</form>
+<script>
+    window.onload = function () {
+        var length=parseInt(localStorage.getItem("item_typelength"));
+        // console.log(length);
+        for(var i=0;i<length;i++){
+            htm="";
+            // console.log(localStorage.getItem("item_typename"+i));
+            htm+="<option value="+parseInt(localStorage.getItem("item_typeid"+i))+">"+localStorage.getItem("item_typename"+i)+"</option>"
+            $("#selecttype_name").append(htm)
+        }
+        layui.use('form', function(){
+            var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+            form.render();
+        });
+    };
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer
+            , form = layui.form;
+        form.on('submit(adduser)', function (data) {
+            var uid=parseInt(localStorage.getItem("uid"));
+            // console.log(uid);
+            var text =$("#text").val();
+            // console.log(text);
+            var type_name=$("dd.layui-this").text();
+            // console.log(type_name);
+            for(var i=0;i<parseInt(localStorage.getItem("item_typelength"));i++){
+                if(localStorage.getItem("item_typename"+i)==type_name)
+                {
+                    type_id=parseInt(localStorage.getItem("item_typeid"+i));
+                    // console.log(type_id)
+                }
+            }
+            var action = data.form.action;
+            $.post("/request/sendRequest",
+                {   uid:uid,
+                    type:type_id,
+                    remark:text
+                },
+                function(result){
+                console.log(result.status);
+                    if(result.status == 0){
+                        layer.msg("已经发送请求，请耐心等待回复",{time:500},function(){
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                        });
+                    }else{
+                        layer.msg(result.message,{time:500},function(){
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                        });
+                    }
+                });
+
+            return false;
+        });
+    });
+shutdown=function () {
+    window.opener=null;window.open('','_self');window.close();
+}
+</script>
+</body>
+</html>

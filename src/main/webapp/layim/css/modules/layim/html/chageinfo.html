@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../../layui.css">
+    <script src="../../../../layui.js"></script>
+    <script src="../../../../../js/jquery.min.js"></script>
+</head>
+<body>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="color: #8B91A0">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" name="nickName" lay-verify="title" autocomplete="off" placeholder="请输入昵称" class="layui-input" id="Nickname">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">性别</label>
+        <div class="layui-input-block">
+            <input type="text" name="gender" lay-verify="title" autocomplete="off" placeholder="请输入性别" class="layui-input" id="gender">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">年龄</label>
+        <div class="layui-input-block">
+            <input type="text" name="age" lay-verify="title" autocomplete="off" placeholder="请输入年龄" class="layui-input" id="age">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">Email</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" lay-verify="title" autocomplete="off" placeholder="请输入email" class="layui-input" id="email">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">电话</label>
+        <div class="layui-input-block">
+            <input type="text" name="email" lay-verify="title" autocomplete="off" placeholder="请输入电话号码" class="layui-input" id="phone">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">省份</label>
+        <div class="layui-input-block">
+            <input type="text" name="province" lay-verify="title" autocomplete="off" placeholder="请输入省份" class="layui-input" id="province">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">城市</label>
+        <div class="layui-input-block">
+            <input type="text" name="city" lay-verify="title" autocomplete="off" placeholder="请输入城市" class="layui-input" id="city">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">学校</label>
+        <div class="layui-input-block">
+            <input type="text" name="school" lay-verify="title" autocomplete="off" placeholder="请输入学校" class="layui-input" id="school">
+        </div>
+        <label class="layui-form-label" style="color: #8B91A0">班级</label>
+        <div class="layui-input-block">
+            <input type="text" name="uclass" lay-verify="title" autocomplete="off" placeholder="请输入班级" class="layui-input" id="class">
+        </div>
+        <br>
+        <div class="layui-input-block">
+            <button class="layui-btn " lay-submit="" lay-filter="chageinfo">确认修改</button>
+        </div>
+
+    </div>
+</body>
+<script>
+    var avatorvalue;
+    window.onload = function () {
+        $.ajax({
+            url:"/userInfo/getAllInfo?id="+parseInt(localStorage.getItem("userId")),
+            type:"post",
+            dataType:"json",
+            success: function(data) {
+                //设置预先参数
+                var man=0;
+                var woman=1;
+                $("#Nickname").val(data.user.nickName);
+                $("#age").val(data.userInfo.age);
+                if(data.user.gender==man){$("#gender").val("男");}
+                if(data.user.gender==woman){$("#gender").val("女");}
+                $("#email").val(data.user.email);
+                $("#phone").val(data.user.phone);
+                $("#province").val(data.userInfo.province);
+                $("#city").val(data.userInfo.city);
+                $("#class").val(data.userInfo.uclass);
+                $("#school").val(data.userInfo.school);
+                avatorvalue=data.user.avator;
+
+                //点击后post
+                layui.use(['layer', 'form'], function () {
+                    var layer = layui.layer
+                        , form = layui.form;
+                    form.on('submit(chageinfo)', function (data) {
+                        var Nickname=$("#Nickname").val();
+                        var age=$("#age").val();
+                        var gender=$("#gender").val();
+                        var email=$("#email").val();
+                        var phone=$("#phone").val();
+                        var province=$("#province").val();
+                        var city=$("#city").val();
+                        var school=$("#school").val();
+                        var classnme=$("#class").val();
+                        var gendervalue;
+                        if(gender=="男"){gendervalue=0}
+                        else {gendervalue=1;}
+                        var gendervalueint=parseInt(gendervalue);
+
+                        $.post("/userInfo/updateInfo", {
+                            id:parseInt(localStorage.getItem("userId")),
+                            nickName:Nickname,
+                            gender:gendervalueint,
+                            email:email,
+                            phone:phone,
+                            avator:avatorvalue,
+                            province:province,
+                            city:city,
+                            school:school,
+                            uclass:classnme,
+                            age:parseInt(age)
+                        },function(data,status){
+                            layer.msg("更改成功，请及时刷新");
+                        });
+
+                    });
+                });
+            }
+        });
+    };
+
+</script>
+</html>

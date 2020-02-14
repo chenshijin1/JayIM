@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>IM - 与分享你的装逼技巧</title>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/l/ibs/jquery/3.0.0-beta1/jquery.min.js"></script>-->
+    <script src="js/jquery/3.0.0-beta1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/validateCode.js">
+    </script>
+    <style type="text/css">
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+        .active {
+            color: #18a689;
+        }
+        .zh-container {
+            text-align: center;
+        }
+        .zh-main {
+            width: 300px;
+            margin: auto;
+        }
+        .zh-header h1 {
+            font-size: 50px;
+            color: #18a689;
+        }
+        .zh-header h2 {
+            font-size: 18px;
+        }
+        .zh-tab {
+            margin-top: 30px;
+        }
+        .zh-tab a {
+            margin: 10px;
+        }
+        .zh-block {
+            height: 3px;
+            width: 45px;
+            position: relative;
+            left: 100px;;
+            background-color: #18a689;
+        }
+        .zh-form-textinput {
+            margin-top: 20px;
+            border-style: solid;
+            border-radius: 3px;
+            border-width: 1px;
+            border-color: lightgray;
+        }
+        .zh-input-wrapper + .zh-input-wrapper {
+            border-style: solid;
+            border-width: 0px;
+            border-top-width: 1px;
+            border-color: lightgray;
+        }
+        .zh-input-wrapper input {
+            width: 90%;
+            height: 35px;
+            margin: 5px;
+            border: none;
+            outline: none;
+        }
+        .zh-button-big {
+            width: 100%;
+            height: 35px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #18a689;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+
+        .float-left {
+            float: left;
+        }
+
+        .float-right {
+            float: right;
+        }
+        .phoKey{
+            width: 90px;
+            height:25px;
+            float: left;
+            _display: inline;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-left: 40px;
+            letter-spacing: 3px; font-size:16px;
+            background-color:#18a689 ;
+            color: white;
+        }
+    </style>
+    <script src="layim/layui.js"></script>
+</head>
+<body>
+<div class="zh-container">
+    <div class="zh-main">
+        <div class="zh-header">
+            <h1 class="zh-title">IM</h1>
+            <h2 class="zh-subtitle">在线及时通讯</h2>
+        </div>
+        <div class="zh-form">
+            <div class="zh-tab zh_signup" style="color:#18a689;">
+            </div>
+            <!--
+            userName用户名 password密码
+            email邮箱 phone手机号码
+
+            /index/register?userName=chen&email=132@qq.com&phone=13012345678&password=123
+            -->
+            <!-- <form id="zh-form-signup" action="" method="post">-->
+            <div class="zh-form-textinput">
+                <div class="zh-input-wrapper">
+                    <input type="text" placeholder="姓名" id="name" required/>
+                </div>
+                <div class="zh-input-wrapper">
+                    <input type="text" placeholder="昵称" id="nickName" required/>
+                </div>
+                <div class="zh-input-wrapper">
+                    <input type="text" placeholder="邮箱" id="email" onblur="email()" required/>
+                </div>
+                <div class="zh-input-wrapper">
+                    <input type="text" placeholder="手机" id="phone" onblur="isValidMobile()" required/>
+                </div>
+                <div class="zh-input-wrapper">
+                    <input type="password" placeholder="密码" id="password" required/>
+                </div>
+                <div class="zh-input-wrapper">
+                    <input type="password" placeholder="确认密码" id="passsword1" onblur="password1()" required/>
+                </div>
+                <div class="zh-input-wrapper" style="border-style: solid;
+            border-width: 0px;
+            border-top-width: 1px;
+            border-color: lightgray;">
+                    <input type="text" placeholder="&nbsp;&nbsp;&nbsp;验证码" id="code" style="float: left;width: 50%;height: 35px;margin: 0px;border: 1px solid lightgray;outline: none;" required/>
+                    <span class="phoKey" id="phoKey"></span>
+                </div>
+            </div>
+            <button class="zh-button-big" id="register_bt">注册IM</button>
+            <span class="float-left">社交帐号登录</span>
+            <!-- </form>-->
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<!--
+✓ 1, 做出基本框架
+✓ 2, 做好位置
+✓ 3, 做出效果
+✓ 4, 做出动态效果(js)
+5, 背后烧 cpu 的 canvas 动画
+-->

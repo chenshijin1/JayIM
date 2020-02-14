@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>发现</title>
+
+    <link rel="stylesheet" href="../../../layui.css">
+    <script src="../../../../layui.js"></script>
+    <script src="../../../../../js/jquery.min.js"></script>
+    <script src="../../../../alert.js"></script>
+    <script src="../js/addImpression.js"></script>
+</head>
+<body>
+<div>
+    <img src="../../../../../images/friends.JPG" style="float:left;">
+    <p style="margin-top: 10px;font-size: large">&nbsp;&nbsp;好友管理</p>
+</div>
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">我的好友</li>
+        <li>查找好友</li>
+        <li>讨论组管理</li>
+    </ul>
+    <!--第一个选项卡-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div style="padding: 20px;">
+                <!--左边框-->
+                <div class="layui-col-md3">
+                    <div class="layui-form">
+                        <!--三个按钮-->
+                        <table class="layui-table" l lay-size="lg" lay-skin="line">
+                            <tbody id="testdiv">
+                            <tr hidden>
+                                <td><a href='javascript:'>全部好友</a></td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <br><br>
+                    <div id="layerDemo" >
+                        <center>
+                            <div class="layui-field-box">
+                                <button data-method="showtable" data-type="auto" style="width: 100%"
+                                        class="layui-btn layui-btn-lg layui-btn-primary layui-btn-radius" >统计好友数量分布
+                                </button>
+                            </div>
+                        </center>
+                        <center>
+                            <div class="layui-field-box">
+                                <button data-method="addfriend" data-type="auto" style="width: 100%"
+                                        class="layui-btn layui-btn-lg layui-btn-primary layui-btn-radius" onclick="changeinfo();">查看或修改个人信息
+                                </button>
+                            </div>
+                        </center>
+                        <center>
+                            <div class="layui-field-box">
+                                <button data-method="addtype_name" data-type="auto" style="width: 100%"
+                                        class="layui-btn layui-btn-lg layui-btn-primary layui-btn-radius">添加分组
+                                </button>
+                            </div>
+                        </center>
+                        <center>
+                            <div class="layui-field-box">
+                                <button data-method="deletetype_name" data-type="auto" style="width: 100%"
+                                        class="layui-btn layui-btn-lg layui-btn-primary layui-btn-radius">删除分组
+                                </button>
+                            </div>
+                        </center>
+                    </div>
+                </div>
+
+                <div class="layui-col-md9" id="load1"></div>
+            </div>
+        </div>
+        <!--查找界面-->
+        <div class="layui-tab-item">
+            <div style="padding: 20px; ">
+                <form class="layui-form" action="#" method="post" id="form1">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input name="title" class="layui-input" id='input1' type="text" placeholder="请输入用户名"
+                                   autocomplete="off" >
+                            <input name="title" class="layui-input" id='input2' type="text" placeholder="请输入省份名"
+                                   autocomplete="off" >
+                            <input name="title" class="layui-input" id='input3' type="text" placeholder="请输入城市名"
+                                   autocomplete="off" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-filter="add" lay-submit="" >立即提交</button>
+                            <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="showusers"></div>
+            </div>
+        </div>
+
+
+
+        <!--讨论组界面-->
+        <div class="layui-tab-item">
+            <div style="padding: 20px;">
+                <div class="layui-col-md3">
+                    <fieldset class="layui-elem-field">
+                        <div class="layui-field-box">
+                            组名:语文讨论组<br>
+                            简介:语文讨论组 <span class="layui-badge layui-bg-orange" style="float: right">1</span>
+                        </div>
+                    </fieldset>
+                    <fieldset class="layui-elem-field">
+                        <div class="layui-field-box">
+                            <a>新建讨论组</a>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="layui-col-md9" id="load2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 添加搜索好友的信息
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer
+            , form = layui.form;
+        form.on('submit(add)', function (data) {
+            var datas = data.field;
+            var userid=$("#input1").val();
+            var province=$("#input2").val();
+            var city=$("#input3").val();
+            var action = data.form.action;
+            $.ajax({
+                url:"/userInfo/search?name="+userid+"&province="+province+"&city="+city,
+                type:"get",
+                dataType:"json",
+                success: function(data) {
+                    $('#showusers').html("");
+                    var htm="";
+
+                    for(var i=0;i<data.length;i++){
+                        htm="<div class=\"layui-col-xs4\">\n" +
+                            "        <!--一个框-->\n" +
+                            "        <fieldset class=\"layui-elem-field\">\n" +
+                            "            <div class=\"layui-field-box\" >\n" +
+                            "                <div class=\"layui-col-xs3\">\n" +
+                            "                <a ><img  src=\""+data[i].avatar+"\" style=\"max-width:100%;max-height:100%;float: left;border-radius:50%\" ></a>\n" +
+                            "                </div>\n" +
+                            "                <div class=\"layui-col-xs9\">\n" +
+                            "                    &nbsp;&nbsp;&nbsp;&nbsp;<b style=\"font-size: 18px;\">"+data[i].nickName+"</b> (<b style=\"color: red\">"+data[i].userName+"</b>)\n" +
+                            "                    <br>\n" +
+                            "                <div class=\"layui-input-inline\">\n" +
+                            "                    <!--选项框-->\n" +
+                            "                    &nbsp;&nbsp;&nbsp;&nbsp;<i class=\"layui-icon \" style=\"font-size: 20px; color: #1E9FFF;\">&#xe66f;</i> <i style=\"color: #8B91A0\">"+data[i].province+"</i>\n" +
+                            "                </div>\n" +
+                            "                <br>\n" +
+                            "                    &nbsp;&nbsp;&nbsp;&nbsp;<button class=\"layui-btn layui-btn-normal layui-btn-sm name\" onclick=\"adduesrs()\" data-id="+data[i].id+" ><i class=\"layui-icon\">&#xe654;</i>好友"
+                            +"</button>\n" +
+                            "                </div>\n" +
+                            "            </div>\n" +
+                            "        </fieldset>\n" +
+                            "    </div>";
+                        $("#showusers").append(htm);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+    // 添加好友申请信息
+
+    layui.use('layer', function(){
+        var layer = layui.layer;
+        adduesrs=function(){
+            var ok=1;
+            $(document).click(function (e) {
+                if(e.target.dataset.id==null){return null}
+                console.log(e.target.dataset.id);
+                localStorage.setItem("uid",e.target.dataset.id);
+            });
+            $.post("addfriend.html",
+                {
+                    "is_OK":ok
+                },
+                function(data,status){
+                    layer.open({
+                        type: 2,
+                        title: '申请好友',
+                        shade: false,
+                        area: ['60%', '60%'],
+                        content: ['addfriend.html', 'no'],
+                        yes: function(index, layero){
+                            layer.msg('成功', {icon: 1});
+                        }
+                    });
+                });
+        };
+        //删除好友
+        deletefriend=function () {
+            layer.confirm('您确定要删除该好友嘛？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.msg('删除成功', {icon: 1});
+                var userid=parseInt(localStorage.getItem("userId"));
+                var friendid=parseInt(localStorage.getItem("selectid"));
+                console.log(userid+"  "+friendid)
+                $.post("/friend/delFriend",
+                    {   userId:userid,
+                        friendId:friendid
+                    },
+                    function(data,status){
+                        parent.layui.layim.removeList({
+                            type: 'friend' //或者group
+                            ,id: friendid //好友或者群组ID
+                        });
+                        layer.msg('成功删除好友' );
+                        window.location.href="find.html"
+                    });
+            }, function(){
+                window.location.href="find.html";
+            });
+        },
+        changetype=function () {
+            layer.open({
+                type: 2,
+                title: '更改分组',
+                shadeClose: true,
+                shade: false,
+                area: ['50%', '50%'],
+                content: ['changetype.html', 'no']
+            });
+        }
+    });
+
+
+    layui.use('element', function () {
+        var $ = layui.jquery
+            , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        //触发事件
+        var active = {
+            tabAdd: function () {
+                //新增一个Tab项
+                element.tabAdd('demo', {
+                    title: '新选项' + (Math.random() * 1000 | 0) //用于演示
+                    , content: '内容' + (Math.random() * 1000 | 0)
+                    , id: new Date().getTime() //实际使用一般是规定好的id，这里以时间戳模拟下
+                })
+            }
+            , tabChange: function () {
+                //切换到指定Tab项
+                element.tabChange('demo', '22'); //切换到：用户管理
+            }
+        };
+        $('.site-demo-active').on('click', function () {
+            var othis = $(this), type = othis.data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+        //Hash地址的定位
+        var layid = location.hash.replace(/^#test=/, '');
+        element.tabChange('test', layid);
+        element.on('tab(test)', function (elem) {
+            location.hash = 'test=' + $(this).attr('lay-id');
+        });
+    });
+    window.onload = function () {
+        $.ajax({
+            url:"/friendType/findAll?user_id="+parseInt(localStorage.getItem("userId")),
+            type:"get",
+            dataType:"json",
+            success: function(data) {
+                var item=data.data;
+                // console.log(localStorage.getItem("userId"));
+                localStorage.setItem("item_typelength",item.length);
+                // console.log(localStorage.getItem("item_typelength"));
+                for(var i=0;i<item.length;i++){
+                    localStorage.setItem("item_typeid"+i+"",item[i].id);
+                    // console.log(localStorage.getItem("item_typeid"+i));
+                    localStorage.setItem("item_typename"+i,item[i].type_name);
+                    localStorage.setItem("item_typecount"+i,item[i].friend_count);
+                    // console.log(localStorage.getItem("item_typename"+i));
+                    // console.log(item[i].type_name);
+                    var typename = item[i].type_name;
+                    // t = "";
+                    // t=`
+                    //     <tr>
+                    //         <td  class="typename">
+                    //         <a href="">
+                    //             <span class="span-typename">${typename}</span>
+                    //         </a>
+                    //         </td>
+                    //     </tr>
+                    // `
+                    // $("#testdiv").append(t);
+                    var htm="";
+                    htm+="<tr>\n" +
+                        "<td><a href='javascript:showfriends();' class=\"showtypeid \" data-productid=\""+item[i].id +"\" '>"+item[i].type_name+"<span class=\"layui-badge layui-bg-blue\" style=\"float: right\">"+item[i].friend_count+"</span>"+"</a></td>\n" +
+                        "</tr>";
+                    $("#testdiv").append(htm)
+                }
+            }
+        });
+    };
+    $(document).click(function (e){
+
+        if(e.target.dataset.btnid1!=null){
+            localStorage.setItem("selectid",e.target.dataset.btnid1);
+            console.log(e.target.dataset.btnid1)
+        }
+        if(e.target.dataset.btnid2!=null){
+            localStorage.setItem("selectid",e.target.dataset.btnid2);
+            // console.log(e.target.dataset.btnid2)
+        }
+        if(e.target.dataset.btnid3!=null){
+            localStorage.setItem("selectid",e.target.dataset.btnid3);
+            // console.log(e.target.dataset.btnid3)
+        }
+        if(e.target.dataset.btnid4!=null){
+            localStorage.setItem("selectid",e.target.dataset.btnid4);
+            // console.log(e.target.dataset.btnid4)
+        }
+        if(e.target.dataset.productid==null){return}
+        localStorage.setItem("typeid",e.target.dataset.productid);
+        // console.log(e.target.dataset.productid)
+    }),
+
+    showfriends=function(){
+        typeid=localStorage.getItem("typeid");
+        typeidint=parseInt(typeid);
+        $.ajax({
+            url:"/friend/showFriends?id="+parseInt(localStorage.getItem("userId"))+"&typeId="+typeidint,
+            dataType:"json",
+            success: function(data) {
+                $("#load1").html("");
+                htm="";
+                for(var i=0;i<data.length;i++){
+                    htm+="<div class=\"layui-col-xs4\">\n" +
+                        "        <!--一个框-->\n" +
+                        "        <fieldset class=\"layui-elem-field\">\n" +
+                        "            <div class=\"layui-field-box\" >\n" +
+                        "                <div class=\"layui-col-xs4\">\n" +
+                        "                <a href=\"javascript:void(0)\" onclick=\"adduser_card();\" ><img src=\""+data[i].avatar+"\" style=\"max-width:100%;max-height:100%;float:left;border-radius:50%\" data-btnid1=\""+data[i].id+"\" ></a>\n" +
+                        "                </div>\n" +
+                        "                <div class=\"layui-col-xs8\">\n" +
+                        "                &nbsp;&nbsp;"+data[i].nickName+"<br>\n" +
+                        "\n" +
+                        "                    &nbsp;&nbsp;<button class=\"layui-btn layui-btn-xs btn2\" onclick=\"changetype();\" data-btnid2=\""+data[i].id+"\">更改分组</button>\n" +
+                        "                    <br>\n" +
+                        "\n" +
+                        "                    &nbsp;&nbsp;<button class=\"layui-btn layui-btn-xs layui-btn-normal btn3\"  data-btnid3=\""+data[i].id+" \" onclick=\"addImpression();\">添加好友印象</button>\n" +
+                        "                <br>\n" +
+                        "\n" +
+                        "                &nbsp;&nbsp;<button class=\"layui-btn layui-btn-xs layui-btn-danger btn4\" data-btnid4=\""+data[i].id+" \" onclick=\"deletefriend();\">删除好友</button>\n" +
+                        "                </div>\n" +
+                        "            </div>\n" +
+                        "        </fieldset>\n" +
+                        "    </div>"
+                }
+                $("#load1").append(htm)
+            }
+        });
+
+    };
+
+
+    //弹出修改个人信息页面
+    changeinfo=function(){
+        layer.open({
+            type: 2,
+            title: '个人信息',
+            area: ['80%', '100%'],
+            content: ['userinfo.html', 'no']
+        });
+    };
+</script>
+
+<script>
+    layui.use(['layim', 'laypage'], function () {
+        var layim = layui.layim
+            , layer = layui.layer
+            , laytpl = layui.laytpl
+            , $ = layui.jquery
+            , laypage = layui.laypage;
+        //一些添加好友请求之类的交互参见文档
+    });
+</script>
+</body>
+</html>

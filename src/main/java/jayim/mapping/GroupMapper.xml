@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jayim.dao.GroupMapper" >
+  <resultMap id="BaseResultMap" type="jayim.model.Group" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="group_num" property="groupNum" jdbcType="VARCHAR" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="avator" property="avator" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="build_time" property="buildTime" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <!-- 根据userId查询好友分组列表   -->
+  <select id="getGroupMasterId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT
+    user_id
+    FROM
+    t_group
+    WHERE
+    id = #{id}
+  </select>
+
+
+
+
+</mapper>

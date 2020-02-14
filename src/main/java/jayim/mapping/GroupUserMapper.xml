@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jayim.dao.GroupUserMapper">
+    <resultMap id="BaseResultMap" type="jayim.model.GroupUser">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="group_id" property="groupId" jdbcType="INTEGER"/>
+        <result column="join_time" property="joinTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="GroupUserListMap" extends="BaseResultMap" type="jayim.model.GroupUser">
+        <collection property="groupUsers" javaType="list" ofType="jayim.model.User"
+                    resultMap="jayim.dao.UserMapper.BaseResultMap">
+        </collection>
+    </resultMap>
+
+    <select id="getSimpleMemberByGroupId" parameterType="java.lang.Integer" resultType="java.lang.String">
+    SELECT
+    t_user.id
+    FROM
+    t_user
+    LEFT JOIN group_user ON
+    t_user.id=group_user.user_id
+    WHERE group_id=#{group_id}
+
+  </select>
+
+    <select id="getMemberByGroupId" parameterType="java.lang.Integer" resultMap="jayim.dao.UserMapper.BaseResultMap">
+        SELECT
+        t_user.id,t_user.user_name,t_user.nick_name,t_user.avator
+        FROM
+        t_user
+        LEFT JOIN group_user ON
+        t_user.id=group_user.user_id
+        WHERE group_id=#{group_id}
+
+    </select>
+
+    <sql id="GroupUser_Column_List">
+    id, user_id, group_id, join_time
+  </sql>
+    <select id="getByGroupId" parameterType="java.lang.Integer" resultType="jayim.model.GroupUser">
+        SELECT
+        <include refid="GroupUser_Column_List"/>
+        FROM group_user
+        where group_id=#{group_id}
+    </select>
+
+
+    <sql id="Group_Column_List">
+        id, group_num, group_name, avator, user_id, build_time, description, status
+    </sql>
+
+    <select id="getByUserId" parameterType="java.lang.Integer" resultMap="jayim.dao.GroupMapper.BaseResultMap">
+        SELECT
+        *
+        FROM t_group WHERE t_group.id IN
+        (SELECT group_id FROM group_user WHERE user_id=#{user_id})
+    </select>
+</mapper>

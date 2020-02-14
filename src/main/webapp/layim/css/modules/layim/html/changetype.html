@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>更改分组</title>
+</head>
+<link rel="stylesheet" href="../../../layui.css">
+<script src="../../../../layui.js"></script>
+<script src="../../../../../js/jquery.min.js"></script>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">请选择分组</label>
+        <div class="layui-input-block">
+            <select id="typeshow" >
+                <option id=""></option>
+            </select>
+        </div>
+        <label class="layui-form-label"></label><button class="layui-btn" lay-submit="" lay-filter="changetype">确认更改</button>
+    </div>
+</form>
+</body>
+<script>
+    window.onload = function () {
+        var length=parseInt(localStorage.getItem("item_typelength"));
+        // console.log(length);
+        for(var i=0;i<length;i++){
+            htm="";
+            // console.log(localStorage.getItem("item_typename"+i));
+            htm+="<option value="+parseInt(localStorage.getItem("item_typeid"+i))+">"+localStorage.getItem("item_typename"+i)+"</option>"
+            $("#typeshow").append(htm)
+        }
+        layui.use('form', function(){
+            var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+            form.render();
+        });
+    };
+
+
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer
+            , form = layui.form;
+
+        form.on('submit(changetype)', function (data) {
+            var uid=parseInt(localStorage.getItem("userId"));
+            var type_name=$("dd.layui-this").text();
+            for(var i=0;i<parseInt(localStorage.getItem("item_typelength"));i++){
+                if(localStorage.getItem("item_typename"+i)==type_name)
+                {
+                    type_id=parseInt(localStorage.getItem("item_typeid"+i));
+                    // console.log(type_id)
+                }
+            }
+            console.log(uid);
+            console.log(parseInt(localStorage.getItem("selectid")));
+            console.log(type_id);
+            $.post("/friend/moveFriend",
+                {   userId:uid,
+                    friendId:parseInt(localStorage.getItem("selectid")),
+                    toTypeId:type_id
+                },
+                function(res){
+                console.log("moveFriendResponse: " + JSON.stringify(res));
+                    /*if(res.status >= 0){
+                        parent.layui.layim.removeList({
+                            type: 'friend' //或者group
+                            ,id: localStorage.getItem("selectid") //好友或者群组ID
+                        });
+                        parent.layui.layim.addList({
+                            type: 'friend'
+                            ,avatar: res.avatar //好友头像
+                            ,username: res.username //好友昵称
+                            ,groupid: res.typeId //所在的分组id
+                            ,id: localStorage.getItem("selectid") //好友ID
+                            ,sign: res.sign //好友签名
+                        });
+                    }*/
+                });
+            layer.msg("已经发送请求",function(){
+                parent.location.reload(); // 父页面刷新
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.close(index);
+            });
+
+            return false;
+        });
+    });
+</script>
+</html>
